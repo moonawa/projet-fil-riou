@@ -1,0 +1,6 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Lien vers phpunit.xml.dist
+Type=Link
+URL=https://github.com/layendoye/Projet-wari/blob/master/phpunit.xml.dist
+Icon=text-html
