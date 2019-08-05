@@ -39,9 +39,6 @@ class EntrepriseController extends AbstractController
             'Content-Type' => 'application/json'
         ]);
     }
-
-    
-
      /**
      * @Route("/list/entreprises", name="list_entreprise", methods={"GET"})
      */
@@ -60,8 +57,6 @@ class EntrepriseController extends AbstractController
     /**
      * @Route("/add/entreprise", name="add_entreprises", methods={"POST"})
      */
-    
-
     public function add(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator){
         $values = json_decode($request->getContent());
 
@@ -202,9 +197,10 @@ class EntrepriseController extends AbstractController
         $form = $this->createForm(DepotType::class, $depot);
         $data=json_decode($request->getContent(),true);
         $form->submit($data);
-
         if($form->isSubmitted() && $form->isValid())
         {
+            var_dump($request->getContent());
+            die();
            $depot->setDate(new \DateTime());
            $depot->setCaissier($Userconnecte);
            $entreprise=$depot->getEntreprise();

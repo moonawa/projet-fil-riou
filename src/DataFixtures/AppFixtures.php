@@ -12,7 +12,7 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager)
     {
-        $motDePass='123456';
+        $motDePass='$argon2id$v=19$m=65536,t=4,p=1$ca6ytbpiXsp0Kv1qAZx5Dg$cjKyjGntnEXLcESRos5sR2uvd401aX3mR5wM89IiPY0';
         $actif='Actif';
         $profilSup=new Profil();
         $profilSup->setLibelle('Super-admin');
