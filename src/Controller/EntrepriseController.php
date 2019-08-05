@@ -175,7 +175,7 @@ class EntrepriseController extends AbstractController
             ]);
             
         }
-        else{
+        elseif($entreprise->getStatus() == "Bloque"){
             $entreprise->setStatus("Actif");
             $reponse= new Response('Partenaire débloqué', 200, [
                 'Content-Type' => 'application/json'
