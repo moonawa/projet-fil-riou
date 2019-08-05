@@ -34,7 +34,6 @@ class AppFixtures extends Fixture
         $profilUtil->setLibelle('utilisateur');
         $manager->persist($profilUtil);
         
-
         $wari=new Entreprise();
                 $wari->setRaisonSociale('MoonAwa')
                     ->setNinea(strval(rand(150000000,979999999)))
@@ -157,4 +156,3 @@ class AppFixtures extends Fixture
         $manager->flush();
     } 
 }
-
