@@ -61,10 +61,9 @@ class AppFixtures extends Fixture
              
         $manager->persist($SupUser);
 
-        /* $faker = \Faker\Factory::create('fr_FR');
+      $faker = \Faker\Factory::create('fr_FR');
         for($i=0;$i<=5;$i++){
-            $entreprise=new Entreprise();
-            //$entreprise->setNumeroCompte(strval(rand(150000000,979999999)))
+            $entreprise=new Entreprise();        
             $entreprise->setRaisonSociale($faker->company)
                         ->setNinea(strval(rand(150000000,979999999)))
                         ->setAdresse($faker->streetAddress)
@@ -111,7 +110,7 @@ class AppFixtures extends Fixture
             $manager->flush();
         }
         //Pour les testes fonctionnels
-        $UserSimpl=new Utilisateur();
+       /* $UserSimpl=new Utilisateur();
         $UserSimpl->setUsername('utilisateur1')
              ->setRoles(['ROLE_Utilisateur']) 
              ->setPassword($motDePass)

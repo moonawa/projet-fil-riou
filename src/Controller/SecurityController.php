@@ -75,8 +75,7 @@ class SecurityController extends AbstractFOSRestController
                 $user->setRoles(['ROLE_utilisateur']);
             }          
             $user->setStatus('Actif')
-                 ->setImageFile($file)
-;
+                 ->setImageFile($file);
             $mba=$this->getUser()->getEntreprise();
             $user->setEntreprise($mba);
             
@@ -91,7 +90,7 @@ class SecurityController extends AbstractFOSRestController
     //aller dans config -> packages -> packages  -> Security.yaml
     /**
      * @Route("/inscription", name="inscription", methods={"POST"})
-     */
+    */
     public function inscriptionUtilisateur(Request $request,ObjectManager $manager,UserPasswordEncoderInterface $encoder, UserInterface $Userconnecte){
         /*
           Début variable utilisé frequement 

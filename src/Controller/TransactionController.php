@@ -45,13 +45,30 @@ class TransactionController extends AbstractController
     }
     /**
      * @Route("/ajout/transaction", name="ajout_transaction")
-     */
-        public function ajout()
+    */
+        public function ajout(Request $request)
         {
-            $trans = new Transaction();
-            $form = $this->createForm(TransactionType::class, $trans);
+            $transaction = new Transaction();
+            $form = $this->createForm(TransactionType::class, $transaction);
             $form->handleRequest($request);
-            $data=json_decode($request->getContent(),true);
+            $values=$request->request->all();
+            $form->submit($values);
+
+            $transaction->setDateEnvoi();
+
+            $c='MA'.rand(10000000,99999999);
+            $codes=$c;
+            $transaction->setCode($codes);
+
+            $usere=$this->getUser();
+            $transaction->setUserEmetteur($usere);
+
+            $transaction->setDateReception();
+
+            $userr=$this->getUser();
+            $transaction->setUserRecepteur($userr);
+
+
                
         }
 
