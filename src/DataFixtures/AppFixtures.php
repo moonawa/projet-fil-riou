@@ -69,7 +69,7 @@ class AppFixtures extends Fixture
                         ->setAdresse($faker->streetAddress)
                         ->setSolde(rand(1000000,10000000))
                         ->setStatus($actif)
-                        ->setEmail('awa'.rand(1, 15).'@gmail.com')
+                        ->setEmail(rand(1, 15).'@gmail.com')
                         ->setTelephone(rand(770000000,779999999));
             $manager->persist($entreprise);
             
@@ -83,8 +83,8 @@ class AppFixtures extends Fixture
                     ->setNom($faker->name)                    
                     ->setNci(strval(rand(150000000,979999999)))
                     ->setStatus($actif)
-                    ->setPhoto('http://lightexhibit.org/bio_images_sm/IMG_0134_720.jpg');
-
+                    ->setImageName('image.jpg');
+                $user->setUpdatedAt(new \DateTime('now'));
                 if($j==1){
                     
                     $user->setProfil($profilAdP)
@@ -101,7 +101,7 @@ class AppFixtures extends Fixture
                 else{
                     $user->setProfil($profilUtil)
                      ->setRoles(['ROLE_utilisateur'])
-                     ->setEmail('ma'.rand(2, 15).'@gmail.com')
+                     ->setEmail(rand(2, 15).'@gmail.com')
                     ->setTelephone(strval(rand(150000000,979999999))); ; 
                 }
                 

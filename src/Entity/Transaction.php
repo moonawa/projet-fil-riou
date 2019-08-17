@@ -45,7 +45,6 @@ class Transaction
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Utilisateur", inversedBy="envois")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $UserEmetteur;
 

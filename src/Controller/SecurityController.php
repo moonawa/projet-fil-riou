@@ -23,7 +23,7 @@ class SecurityController extends AbstractFOSRestController
 {
     /**
      * @Route("/register", name="register", methods={"Post"})
-     */
+    */
     public function register(ValidatorInterface $validator, Request $request, UserpasswordEncoderInterface $passwordEncoder): Response{
         $user = new Utilisateur();
         $form=$this->createForm(UtilisateurType::class,$user);

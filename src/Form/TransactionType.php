@@ -15,7 +15,6 @@ class TransactionType extends AbstractType
             ->add('ClientEmetteur')
             ->add('TelephoneEmetteur')
             ->add('NciEmetteur')
-            ->add('DateEnvoi')
             ->add('Code')
             ->add('Montant')
             ->add('Frais')

@@ -53,7 +53,7 @@ class Utilisateur implements UserInterface
     private $Nom;
 
     /**
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255, unique=false)
      */
     private $Email;
 

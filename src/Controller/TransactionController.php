@@ -2,15 +2,21 @@
 
 namespace App\Controller;
 
+use DateTime;
 use App\Entity\Depot;
 use App\Entity\Transaction;
+use App\Form\TransactionType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use FOS\RestBundle\Controller\FOSRestController;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class TransactionController extends AbstractController
+class TransactionController extends AbstractFOSRestController 
 {
     /**
      * @Route("/transaction", name="transaction")
@@ -39,14 +45,12 @@ class TransactionController extends AbstractController
 
         }
 
-        return $this->handleView($this->view($form->getErrors));
-
-        
+        return $this->handleView($this->view($form->getErrors));        
     }
     /**
-     * @Route("/ajout/transaction", name="ajout_transaction")
+     * @Route("/ajout/transaction", name="ajout_transaction", methods={"Post"})
     */
-        public function ajout(Request $request)
+        public function ajout(ValidatorInterface $validator,Request $request, EntityManagerInterface $entityManager)
         {
             $transaction = new Transaction();
             $form = $this->createForm(TransactionType::class, $transaction);
@@ -54,7 +58,9 @@ class TransactionController extends AbstractController
             $values=$request->request->all();
             $form->submit($values);
 
-            $transaction->setDateEnvoi();
+            if($form->isSubmitted()){
+
+            $transaction->setDateEnvoi(new \DateTime());
 
             $c='MA'.rand(10000000,99999999);
             $codes=$c;
@@ -63,12 +69,17 @@ class TransactionController extends AbstractController
             $usere=$this->getUser();
             $transaction->setUserEmetteur($usere);
 
-            $transaction->setDateReception();
+            $transaction->setDateReception(new \DateTime());
 
             $userr=$this->getUser();
             $transaction->setUserRecepteur($userr);
 
-
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($transaction);
+            $entityManager->flush();
+            return $this->handleView($this->view(['status'=>'ok'], Response::HTTP_CREATED));
+            }
+        return $this->handleView($this->view($form->getErrors()));
                
         }
 
