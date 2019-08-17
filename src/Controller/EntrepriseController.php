@@ -3,11 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Depot;
+use App\Entity\Compte;
+use App\Entity\Profil;
 use App\Form\DepotType;
 use App\Entity\Entreprise;
 use App\Entity\Utilisateur;
-use App\Entity\Compte;
-use App\Entity\Profil;
+use App\Form\EntrepriseType;
+use App\Form\UtilisateurType;
 use App\Repository\EntrepriseRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,16 +50,15 @@ class EntrepriseController extends AbstractController
         $data = $serializer->serialize($entreprises, 'json',[
             'groups' => ['list']
         ]);
-
         return new Response($data, 200, [
             'Content-Type' => 'application/json'
         ]);
-    }
-   
+    }  
     /**
      * @Route("/add/entreprise", name="add_entreprises", methods={"POST"})
      */
     public function add(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator){
+        
         $values = json_decode($request->getContent());
 
         $entreprise = new Entreprise();
@@ -69,7 +70,6 @@ class EntrepriseController extends AbstractController
         $entreprise->setEmail($values->email);
         $entreprise->setTelephone($values->telephone);
 
-        
         $user = new Utilisateur();
         $user->setUsername($values->username);
         $user->setPassword($passwordEncoder->encodePassword($user, $values->password));
@@ -81,7 +81,7 @@ class EntrepriseController extends AbstractController
         $user->setRoles(["'ROLE_Super-admin'"]);
         $user->setPhoto($values->photo);
         $user->setEntreprise($entreprise);
-
+        $form->submit($info);$form->submit($info);
         $repos=$this->getDoctrine()->getRepository(Profil::class);
         $Profil=$repos->find($values->Profil);
         $user->setProfil($Profil);
@@ -91,8 +91,8 @@ class EntrepriseController extends AbstractController
         $compte->setNoCompte($values->no_compte);
         $compte->setSolde($values->solde);
         $compte->setEntreprise($entreprise);
-
-        $entityManager->persist($compte);
+        
+        $entityManager->persist($compte);$form->submit($info);
         $entityManager->persist($user);
         $entityManager->persist($entreprise);
 
@@ -106,11 +106,52 @@ class EntrepriseController extends AbstractController
 
         return new JsonResponse($data, 201);
     }
+    /**
+     * @Route("/form/entreprise", name="add_entreprises", methods={"POST"})
+     */
+    public function new(Request $request, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder):Response
+    {
+        /*$entreprise = new Entreprise();
+        $form = $this->createForm(EntrepriseType::class, $entreprise);
+        $data = json_decode($request->getContent(), true);
+        $form->submit($data);
+        $entityManager->persist($entreprise);
+        $entityManager->flush();
+        //recuperation de l'id du partenaire//
+        $repository = $this->getDoctrine()->getRepository(Entreprise::class);
+        $part = $repository->find($entreprise->getId());
 
+        $compte = new Compte();
+        $form = $this->createForm(EntrepriseType::class, $compte);
+        $data = json_decode($request->getContent(), true);
+        $form->submit($data);
+        $compte->setSolde(1);*/
+        /*$num = rand(100, 999);
+   
+        $number = $num;
+        $compte->set($number);
+        $compte->setEntreprise($part);
+        $entityManager = $this->getDoctrine()->getManager(); */
+    
+        $user = new Utilisateur();
+        $form = $this->createForm(UtilisateurType::class, $user);
+        $form->handleRequest($request);
+        $form->submit($data);
+        $user->setRoles(["ROLE_ADMIN_PARTENAIRE"]);
+        $user->setEntreprise($part);
+        $user->setStatut("actif");
+        $hash = $encoder->encodePassword($user, $user->getPassword());
+        $user->setPassword($hash);
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($compte);
+        $entityManager->persist($user);
+        $entityManager->flush();
+        return new Response('Admin Partenaire ajoute', Response::HTTP_CREATED);
+    }
     /**
      * @Route("/ajout/entreprises", name="ajout_entreprise", methods={"POST"})
-     */
-    public function new(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, ValidatorInterface $validator)
+    */
+    public function put(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, ValidatorInterface $validator)
     {       
         $entreprise = $serializer->deserialize($request->getContent(), Entreprise::class,'json');
         $errors = $validator->validate($entreprise);
@@ -128,7 +169,6 @@ class EntrepriseController extends AbstractController
         ];
         return new JsonResponse($data, 201);
     }
-
     /**
     * @Route("/entreprises/{id}", name="update_entreprise", methods={"PUT"})
     */ 
@@ -157,7 +197,6 @@ class EntrepriseController extends AbstractController
             ];
             return new JsonResponse($data);
         }
-
     /**
     * @Route("/bloque/entreprises/{id}", name="bloque_entreprise", methods={"PUT"})
     */ 
@@ -172,8 +211,7 @@ class EntrepriseController extends AbstractController
             $entreprise->setStatus("bloqué");
             $reponse= new Response('Partenaire bloqué', 200, [
                 'Content-Type' => 'application/json'
-            ]);
-            
+            ]);            
         }
         elseif($entreprise->getStatus() == "Bloque"){
             $entreprise->setStatus("Actif");
@@ -184,13 +222,10 @@ class EntrepriseController extends AbstractController
         $manager->persist($entreprise);
         $manager->flush();
         return $reponse;
-    }
-
-   
+    }  
     /**
     * @Route("/depot/entreprise")
     */
-
     public function depot (Request $request, UserInterface $Userconnecte)
     {
         $depot = new Depot();
@@ -198,9 +233,7 @@ class EntrepriseController extends AbstractController
         $data=json_decode($request->getContent(),true);
         $form->submit($data);
         if($form->isSubmitted() && $form->isValid())
-        {
-            var_dump($request->getContent());
-            die();
+        {           
            $depot->setDate(new \DateTime());
            $depot->setCaissier($Userconnecte);
            $entreprise=$depot->getEntreprise();
@@ -214,7 +247,6 @@ class EntrepriseController extends AbstractController
                'message' => 'Le depot a bien été effectué '
            ];
            return new JsonResponse($data, 201);
-
         }
         return new JsonResponse($this->view($form->getErrors()), 500);
     }

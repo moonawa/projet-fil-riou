@@ -5,10 +5,13 @@ namespace App\Form;
 use App\Entity\Profil;
 use App\Entity\Utilisateur;
 use Symfony\Component\Form\AbstractType;
+use Vich\UploaderBundle\Form\Type\VichFileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use App\Entity\Entreprise;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
 class UtilisateurType extends AbstractType
 {
@@ -16,15 +19,29 @@ class UtilisateurType extends AbstractType
     {
         $builder
             ->add('username')
-            ->add('password')
-            ->add('confirmPassword')
+            ->add('plainPassword', PasswordType::class, [
+                // instead of being set onto the object directly,
+                // this is read and encoded in the controller
+                'mapped' => false,
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Please enter a password',
+                    ]),
+                    new Length([
+                        'min' => 6,
+                        'minMessage' => 'Your password should be at least {{ limit }} characters',
+                        'max' => 4096,
+                    ]),
+                ],
+            ])
             ->add('Nom')
             ->add('Email')
             ->add('Telephone')
             ->add('Nci')
-            ->add('Entreprise',EntityType::class,['class'=> Entreprise::class,'choice_label'=>'RaisonSociale'])
-            ->add('Profil',EntityType::class,['class'=> Profil::class,'choice_label'=>'Libelle'])
-            ->add('Photo')
+            ->add('Status')          
+            ->add('imageFile', VichFileType::class)
+            ->add('Entreprise')
+            ->add('Profil', EntityType::class, ['class'=>Profil::class])
         ;
     }
 
@@ -32,7 +49,7 @@ class UtilisateurType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Utilisateur::class,
-            'csrf_protection'=>false
+            'csrf_protection'=> false 
         ]);
     }
 }

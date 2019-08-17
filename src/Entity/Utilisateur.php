@@ -1,14 +1,19 @@
 <?php
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Symfony\Component\HttpFoundation\File\File;
+use Doctrine\Common\Collections\ArrayCollection;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert; //pour la validation des données
-
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UtilisateurRepository")
+ * @Vich\Uploadable
  */
 class Utilisateur implements UserInterface
 {
@@ -18,23 +23,19 @@ class Utilisateur implements UserInterface
      * @ORM\Column(type="integer")
      */
     private $id;
-
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      */
     private $username;
-
     /**
      * @ORM\Column(type="json")
      */
     private $roles = [];
-
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
      */
     private $password;
-
     /**
     *@Assert\EqualTo(propertyPath="password",message="Les mots de passes ne correspondent pas !")
     */
@@ -83,7 +84,7 @@ class Utilisateur implements UserInterface
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Profil", inversedBy="utilisateurs")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $Profil;
 
@@ -92,23 +93,38 @@ class Utilisateur implements UserInterface
      */
     private $depots;
 
+    // ... other fields
+
+    /**
+     * NOTE: This is not a mapped field of entity metadata, just a simple property.
+     * 
+     * @Vich\UploadableField(mapping="user_image", fileNameProperty="imageName")
+     * 
+     * @var File
+     */
+    private $imageFile;
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @var string
      */
-    private $photo;
+    private $imageName;
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
 
-    public function __construct()
-    {
-        $this->envois = new ArrayCollection();
-        $this->retraits = new ArrayCollection();
-        $this->depots = new ArrayCollection();
-    }
+     */
+    private $updatedAt;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Compte")
+     * 
+     */
+    private $compte;
 
     public function getId(): ?int
     {
         return $this->id;
     }
-
     /**
      * A visual identifier that represents this user.
      *
@@ -118,14 +134,11 @@ class Utilisateur implements UserInterface
     {
         return (string) $this->username;
     }
-
     public function setUsername(string $username): self
     {
         $this->username = $username;
-
         return $this;
     }
-
     /**
      * @see UserInterface
      */
@@ -134,17 +147,14 @@ class Utilisateur implements UserInterface
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
-
         return array_unique($roles);
     }
-
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
 
         return $this;
     }
-
     /**
      * @see UserInterface
      */
@@ -152,19 +162,15 @@ class Utilisateur implements UserInterface
     {
         return (string) $this->password;
     }
-
     public function setPassword(string $password): self
     {
         $this->password = $password;
-
         return $this;
-    }
-    
+    }  
     public function getConfirmPassword(): string
     {
         return (string) $this->confirmPassword;
     }
-
     public function setConfirmPassword(string $confirmPassword): self
     {
         $this->confirmPassword = $confirmPassword;
@@ -365,15 +371,67 @@ class Utilisateur implements UserInterface
 
         return $this;
     }
-
-    public function getPhoto(): ?string
+    /**
+     * If manually uploading a file (i.e. not using Symfony Form) ensure an instance
+     * of 'UploadedFile' is injected into this setter to trigger the update. If this
+     * bundle's configuration parameter 'inject_on_load' is set to 'true' this setter
+     * must be able to accept an instance of 'File' as the bundle will inject one here
+     * during Doctrine hydration.
+     *
+     * @param null |File $imageFile
+     */
+    public function setImageFile(?File $imageFile = null): void
     {
-        return $this->photo;
+        $this->imageFile = $imageFile;
+
+        if ($this->imageFile instanceof UploadFile) {
+            $this->updatedAt = new \DateTime('now');
+        }
     }
 
-    public function setPhoto(string $photo): self
+    public function getImageFile(): ?File
     {
-        $this->photo = $photo;
+        return $this->imageFile;
+    }
+
+    public function setImageName(?string $imageName): void
+    {
+        $this->imageName = $imageName;
+    }
+
+    public function getImageName(): ?string
+    {
+        return $this->imageName;
+    }
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+   
+    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+    
+    
+
+    public function __construct()
+    {
+        $this->envois = new ArrayCollection();
+        $this->retraits = new ArrayCollection();
+        $this->depots = new ArrayCollection();
+    }
+
+    public function getCompte(): ?Compte
+    {
+        return $this->compte;
+    }
+
+    public function setCompte(?Compte $compte): self
+    {
+        $this->compte = $compte;
 
         return $this;
     }

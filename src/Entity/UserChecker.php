@@ -14,7 +14,6 @@ class UserChecker implements UserCheckerInterface
         if ( ! $user instanceof Utilisateur ) {//si l'utilisateur n'existe pas ne rien retourner
             return ;
         }
-
         /*if ( $user->getStatus()!='Actif') {//si l'utilisateur est bloqué
             throw new Exception('Ce compte est bloqué, veuillez contacter l\'administrateur');
         }
@@ -22,8 +21,8 @@ class UserChecker implements UserCheckerInterface
         if ( $user->getEntreprise()->getStatus()!='Actif') {//si l'entreprise de l'utilisateur est bloqué
             throw new Exception('Ce partenaire est bloqué, veuillez contacter l\'administrateur');
         }*/
+    
     }
-
     public function checkPostAuth ( UserInterface $user )
     {
         if ( ! $user instanceof Utilisateur ) {

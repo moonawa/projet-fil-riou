@@ -7,6 +7,7 @@ use App\Entity\Entreprise;
 use App\Entity\Utilisateur;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 class AppFixtures extends Fixture
 {
@@ -55,8 +56,9 @@ class AppFixtures extends Fixture
              ->setTelephone($wari->getTelephone())
              ->setNci(strval(rand(150000000,979999999)))
              ->setStatus($actif)
-             ->setProfil($profilSup) 
-             ->setPhoto('image.jpg'); 
+             ->setImageName('image.jpg');
+        $SupUser->setUpdatedAt(new \DateTime('now'));
+             
         $manager->persist($SupUser);
 
         /* $faker = \Faker\Factory::create('fr_FR');

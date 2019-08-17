@@ -63,7 +63,6 @@ class Entreprise
      * @ORM\OneToMany(targetEntity="App\Entity\Depot", mappedBy="Entreprise")
      */
     private $depots;
-
    
     /*
      * @ORM\Column(type="string", length=255)
@@ -177,7 +176,7 @@ class Entreprise
     {
         if ($this->utilisateurs->contains($utilisateur)) {
             $this->utilisateurs->removeElement($utilisateur);
-            // set the owning side to null (unless already changed)
+            //set the owning side to null (unless already changed)
             if ($utilisateur->getEntreprise() === $this) {
                 $utilisateur->setEntreprise(null);
             }

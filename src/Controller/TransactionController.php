@@ -2,12 +2,13 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\Depot;
+use App\Entity\Transaction;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use App\Entity\Depot;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class TransactionController extends AbstractController
 {
@@ -42,6 +43,18 @@ class TransactionController extends AbstractController
 
         
     }
+    /**
+     * @Route("/ajout/transaction", name="ajout_transaction")
+     */
+        public function ajout()
+        {
+            $trans = new Transaction();
+            $form = $this->createForm(TransactionType::class, $trans);
+            $form->handleRequest($request);
+            $data=json_decode($request->getContent(),true);
+               
+        }
+
 }
 
 
