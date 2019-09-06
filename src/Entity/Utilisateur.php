@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert; //pour la validation des données
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UtilisateurRepository")
@@ -21,14 +22,17 @@ class Utilisateur implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"list", "show"})
      */
     private $id;
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Groups({"list", "show"})
      */
     private $username;
     /**
      * @ORM\Column(type="json")
+     * @Groups({"list", "show"})
      */
     private $roles = [];
     /**
@@ -44,16 +48,19 @@ class Utilisateur implements UserInterface
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Entreprise", inversedBy="utilisateurs")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"list", "show"})
      */
     private $Entreprise;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"list", "show"})
      */
     private $Nom;
 
     /**
      * @ORM\Column(type="string", length=255, unique=false)
+     * @Groups({"list", "show"})
      */
     private $Email;
 
@@ -64,6 +71,7 @@ class Utilisateur implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
+     * @Groups({"list", "show"})
      */
     private $Nci;
 
@@ -79,12 +87,14 @@ class Utilisateur implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=false)
+     * @Groups({"list", "show"})
      */
     private $Status;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Profil", inversedBy="utilisateurs")
      * @ORM\JoinColumn(nullable=true)
+     * @Groups({"list", "show"})
      */
     private $Profil;
 

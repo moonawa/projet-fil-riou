@@ -28,7 +28,7 @@ class SecurityController extends AbstractFOSRestController
         $user = new Utilisateur();
         $form=$this->createForm(UtilisateurType::class,$user);
         $form->handleRequest($request);
-        $data=json_decode($request->getContent(),true);
+        //$data = $request->request->All();
         //if(!$data){
             $data=$request->request->all();
             $file=$request->files->all()['imageName'];

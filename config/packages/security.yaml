@@ -2,7 +2,6 @@ security:
     encoders:
         App\Entity\Utilisateur:
             algorithm: auto
-
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         # used to reload user from session & other features (e.g. switch_user)
@@ -16,22 +15,25 @@ security:
             security: false
         login:
             pattern:  ^/api/connexion
-            user_checker : app.user_checker # je l'ai mis dans services.yaml pour les utilisateurs bloqués
             stateless: true
             anonymous: true
-            provider: app_user_provider  # pour voir le site on doit se connecter et notre provider de reference pour ce connecté est in_database
-
             json_login:
-                check_path: /api/connexion
-                success_handler: lexik_jwt_authentication.handler.authentication_success
-                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+                check_path:               /api/connexion
+                success_handler:          lexik_jwt_authentication.handler.authentication_success
+                failure_handler:          lexik_jwt_authentication.handler.authentication_failure
         api:
-            http_basic : ~ #pour les testes
+            http_basic : ~
             pattern:   ^/api
             stateless: true
             guard:
                 authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
+                    - lexik_jwt_authentication.jwt_token_authenticator        
+    
+        main:
+            anonymous: true
+            json_login:
+                check_path: /api/connexion
+
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
@@ -42,5 +44,16 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/api/inscription/utilisateur, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        #- { path: ^/api/connexion, roles: IS_AUTHENTICATED_ANONYMOUSLY }        
+        #- { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+        # - { path: ^/api/comptes, roles: ROLE_SUPER_ADMIN }
+        # - { path: ^/api/comptes, roles: ROLE_ADMIN_SUPER }
+        # - { path: ^/api/profils, roles: ROLE_SUPER_ADMIN }
+        # - { path: ^/api/comptes, roles: ROLE_ADMIN_SUPER }
+        # - { path: ^/api/profils, roles: ROLE_ADMIN_SUPER}
+        # - { path: ^/api/depots, roles: ROLE_ADMIN_PARTENAIRE}
+        # - { path: ^/api/register, roles: ROLE_ADMIN}
+        # - { path: ^/api/depots, roles: ROLE_CAISSIER}
+        # - { path: ^/api/envoie, roles: ROLE_USER }
+        # - { path: ^/api/envoie, roles: ROLE_ADMIN_PARTENAIRE }
+        # - { path: ^/api/envoie, roles: ROLE_ADMIN }

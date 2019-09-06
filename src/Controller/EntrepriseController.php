@@ -12,6 +12,7 @@ use App\Form\EntrepriseType;
 use App\Form\UtilisateurType;
 use App\Repository\EntrepriseRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\UtilisateurRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,32 +29,37 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
  */
 class EntrepriseController extends AbstractController
 {
+ 
     /**
-     * @Route("/entreprise/{id}", name="show_entreprise", methods={"GET"})
+     * @Route("/{id}", name="show_entreprise", methods={"GET"})
     */
-    public function show(Entreprise $entreprise, EntrepriseRepository $entrepriseRepository, SerializerInterface $serializer)
+    /* public function show(EntrepriseRepository $entrepriseRepository, SerializerInterface $serializer)
     {
-        $entreprise = $entrepriseRepository->find($entreprise->getId());
-        $data = $serializer->serialize($entreprise,'json',[
+        $entreprises = $entrepriseRepository->find($entreprises->getId());
+        $data = $serializer->serialize($entreprises,'json',[
             'groups' => ['show']
         ]);
         return new Response($data,200,[
             'Content-Type' => 'application/json'
         ]);
-    }
-     /**
-     * @Route("/list/entreprises", name="list_entreprise", methods={"GET"})
+    } */
+    /**
+     * @Route("/liste", name="listerentreprise", methods={"GET"})
      */
-    public function liste(EntrepriseRepository $entrepriseRepository, SerializerInterface $serializer)
+    public function lister(EntrepriseRepository $entrepriseRepository, SerializerInterface $serialize)
     {
         $entreprises = $entrepriseRepository->findAll();
-        $data = $serializer->serialize($entreprises, 'json',[
-            'groups' => ['list']
+       
+        
+        $data = $serialize->serialize($entreprises, 'json',[
+            'groups' => ['show']
         ]);
+
         return new Response($data, 200, [
-            'Content-Type' => 'application/json'
+            'Content-Type'=>'application/json'
         ]);
-    }  
+    }
+
     /**
      * @Route("/add/entreprise", name="add_entreprises", methods={"POST"})
      */
@@ -111,42 +117,17 @@ class EntrepriseController extends AbstractController
      */
     public function new(Request $request, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder):Response
     {
-        /*$entreprise = new Entreprise();
+        $entreprise = new Entreprise();
         $form = $this->createForm(EntrepriseType::class, $entreprise);
-        $data = json_decode($request->getContent(), true);
+        $data = $request->request->All();
         $form->submit($data);
         $entityManager->persist($entreprise);
         $entityManager->flush();
-        //recuperation de l'id du partenaire//
-        $repository = $this->getDoctrine()->getRepository(Entreprise::class);
-        $part = $repository->find($entreprise->getId());
-
-        $compte = new Compte();
-        $form = $this->createForm(EntrepriseType::class, $compte);
-        $data = json_decode($request->getContent(), true);
-        $form->submit($data);
-        $compte->setSolde(1);*/
-        /*$num = rand(100, 999);
-   
-        $number = $num;
-        $compte->set($number);
-        $compte->setEntreprise($part);
-        $entityManager = $this->getDoctrine()->getManager(); */
-    
-        $user = new Utilisateur();
-        $form = $this->createForm(UtilisateurType::class, $user);
-        $form->handleRequest($request);
-        $form->submit($data);
-        $user->setRoles(["ROLE_ADMIN_PARTENAIRE"]);
-        $user->setEntreprise($part);
-        $user->setStatut("actif");
-        $hash = $encoder->encodePassword($user, $user->getPassword());
-        $user->setPassword($hash);
+        
         $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($compte);
-        $entityManager->persist($user);
+        $entityManager->persist($entreprise);
         $entityManager->flush();
-        return new Response('Admin Partenaire ajoute', Response::HTTP_CREATED);
+        return new Response('entreprise ajoute', Response::HTTP_CREATED);
     }
     /**
      * @Route("/ajout/entreprises", name="ajout_entreprise", methods={"POST"})
@@ -224,7 +205,7 @@ class EntrepriseController extends AbstractController
         return $reponse;
     }  
     /**
-    * @Route("/depot/entreprise")
+    * @Route("/depot/entreprise", name="depot_entreprise", methods={"POST"})
     */
     public function depot (Request $request, UserInterface $Userconnecte)
     {
@@ -249,5 +230,21 @@ class EntrepriseController extends AbstractController
            return new JsonResponse($data, 201);
         }
         return new JsonResponse($this->view($form->getErrors()), 500);
+    }
+    /**
+     * @Route("/list", name="listeruser", methods={"GET"})
+     */
+    public function list(UtilisateurRepository $utilisateurRepository, SerializerInterface $serialize)
+    {
+        $users = $utilisateurRepository->findAll();
+       
+        
+        $data = $serialize->serialize($users, 'json',[
+            'groups' => ['show']
+        ]);
+
+        return new Response($data, 200, [
+            'Content-Type'=>'application/json'
+        ]);
     }
 }

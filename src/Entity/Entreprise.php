@@ -50,12 +50,13 @@ class Entreprise
     /**
      * @ORM\Column(type="bigint")
      * @Assert\NotBlank(message="Ce champ ne doit pas être vide")
-     * @Groups({"list", "show"})
+     * @Groups({"list"})
      */
     private $Solde;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Utilisateur", mappedBy="Entreprise")
+     
      */
     private $utilisateurs;
 
@@ -66,7 +67,7 @@ class Entreprise
    
     /*
      * @ORM\Column(type="string", length=255)
-     * @Groups({"list", "show"})    
+     
      */
     private $Status;
 
@@ -87,12 +88,11 @@ class Entreprise
     private $telephone;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Compte", mappedBy="entreprise")
-     * @Assert\NotBlank(message="Le champ ne doit pas être vide")
-     * @Groups({"list", "show"})
-     * @Assert\Length(min="2", minMessage="Ce champ doit contenir un minimum de {{ limit }} caractères", max="255", maxMessage="Ce champ doit contenir un maximum de {{ limit }} caractères")   
+     * @ORM\OneToMany(targetEntity="App\Entity\Compte", mappedBy="entreprise", orphanRemoval=true)
      */
     private $comptes;
+
+
 
     public function __construct()
     {
@@ -282,4 +282,6 @@ class Entreprise
 
         return $this;
     }
+
+    
 }

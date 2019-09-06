@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Compte;
 use App\Entity\Profil;
 use App\Entity\Entreprise;
 use App\Entity\Utilisateur;
@@ -43,7 +44,15 @@ class AppFixtures extends Fixture
                     ->setStatus($actif) 
                     ->setEmail('awandiayesene7@gmail.com')
                     ->setTelephone(rand(770000000,779999999));
-        $manager->persist($wari);
+        
+
+        
+
+        $compte = new Compte();
+        $nocompte='MA'.rand(10000,99999);       
+        $compte->setNoCompte($nocompte)
+                ->setSolde(75000)
+                ->setEntreprise($wari);
 
         $SupUser=new Utilisateur();
         $SupUser->setUsername('Moonawa') 
@@ -56,12 +65,12 @@ class AppFixtures extends Fixture
              ->setTelephone($wari->getTelephone())
              ->setNci(strval(rand(150000000,979999999)))
              ->setStatus($actif)
-             ->setImageName('image.jpg');
-        $SupUser->setUpdatedAt(new \DateTime('now'));
-             
-        $manager->persist($SupUser);
+             ->setImageName('image.jpg');         
+        $SupUser->setUpdatedAt(new \DateTime('now'));                 
+        $SupUser ->setCompte($compte);
+        
 
-      $faker = \Faker\Factory::create('fr_FR');
+      /* $faker = \Faker\Factory::create('fr_FR');
         for($i=0;$i<=5;$i++){
             $entreprise=new Entreprise();        
             $entreprise->setRaisonSociale($faker->company)
@@ -71,7 +80,8 @@ class AppFixtures extends Fixture
                         ->setStatus($actif)
                         ->setEmail(rand(1, 15).'@gmail.com')
                         ->setTelephone(rand(770000000,779999999));
-            $manager->persist($entreprise);
+                          
+            
             
                        
             for($j=1;$j<5;$j++){
@@ -104,56 +114,19 @@ class AppFixtures extends Fixture
                      ->setEmail(rand(2, 15).'@gmail.com')
                     ->setTelephone(strval(rand(150000000,979999999))); ; 
                 }
+                $compte = new Compte();
+                $$user ->setCompte($compte);
                 
                 $manager->persist($user);
             }
             $manager->flush();
-        }
-        //Pour les testes fonctionnels
-       /* $UserSimpl=new Utilisateur();
-        $UserSimpl->setUsername('utilisateur1')
-             ->setRoles(['ROLE_Utilisateur']) 
-             ->setPassword($motDePass)
-             ->setConfirmPassword($motDePass)
-             ->setEntreprise($wari)
-             ->setNom('utilisateur1')
-             ->setEmail('utilisateur1@gmail.com')
-             ->setTelephone(rand(770000000,779999999))
-             ->setNci(strval(rand(150000000,979999999)))
-             ->setStatus($actif)
-             ->setProfil($profilUtil)
-             ->setPhoto('http://lightexhibit.org/bio_images_sm/IMG_0134_720.jpg'); 
-        $manager->persist($UserSimpl);
-
-        $UserCaissier=new Utilisateur();
-        $UserCaissier->setUsername('caissier1')
-             ->setRoles(['ROLE_Caissier'])
-             ->setPassword($motDePass)
-             ->setConfirmPassword($motDePass)
-             ->setEntreprise($wari)
-             ->setNom('caissier1')
-             ->setEmail('caissier1@gmail.com')
-             ->setTelephone(rand(770000000,779999999))
-             ->setNci(strval(rand(150000000,979999999)))
-             ->setStatus($actif)
-             ->setProfil($profilCaiss)
-             ->setPhoto('http://lightexhibit.org/bio_images_sm/IMG_0134_720.jpg'); 
-        $manager->persist($UserCaissier);
-
-        $UseradminPinci=new Utilisateur();
-        $UseradminPinci->setUsername('admPrincipale1')
-             ->setRoles(['ROLE_admin-Principal'])
-             ->setPassword($motDePass)
-             ->setConfirmPassword($motDePass)
-             ->setEntreprise($wari)
-             ->setNom('admPrincipale1')
-             ->setEmail('admPrincipale1@gmail.com')
-             ->setTelephone(rand(770000000,779999999))
-             ->setNci(strval(rand(150000000,979999999)))
-             ->setStatus($actif)
-             ->setProfil($profilAdP)
-             ->setPhoto('http://lightexhibit.org/bio_images_sm/IMG_0134_720.jpg'); 
-        $manager->persist($UseradminPinci);*/
+        } */
+        $manager->persist($wari);
+        $manager->persist($compte);
+        $manager->persist($SupUser);
+       // $manager->persist($entreprise);
+        
+        
         $manager->flush();
     } 
 }

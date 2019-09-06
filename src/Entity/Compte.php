@@ -29,11 +29,12 @@ class Compte
     private $solde;
 
     /**
-     * @ORM\Column(type="string", length=255)
      * @ORM\ManyToOne(targetEntity="App\Entity\Entreprise", inversedBy="comptes")
      * @ORM\JoinColumn(nullable=false)
      */
     private $entreprise;
+
+   
 
     public function getId(): ?int
     {
@@ -75,4 +76,6 @@ class Compte
 
         return $this;
     }
+
+    
 }

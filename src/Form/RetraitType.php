@@ -7,27 +7,28 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class TransactionType extends AbstractType
+class RetraitType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('ClientEmetteur')
+           /*  ->add('ClientEmetteur')
             ->add('TelephoneEmetteur')
             ->add('NciEmetteur')
+            ->add('DateEnvoi') */
             ->add('Code')
-            ->add('Montant')
+            ->add('NciRecepteur')
+            /* ->add('Montant')
             ->add('Frais')
-            ->add('UserEmetteur')
-
             ->add('ClientRecepteur')
-             ->add('TelephoneRecepteur')
-            /*->add('NciRecepteur')
+            ->add('TelephoneRecepteur')            
             ->add('DateReception')
             ->add('CommissionEmetteur')
             ->add('CommissionRecepteur')
             ->add('CommissionWari')
-            ->add('TaxesEtat')            
+            ->add('TaxesEtat')
+            ->add('etat')
+            ->add('UserEmetteur')
             ->add('UserRecepteur') */
         ;
     }

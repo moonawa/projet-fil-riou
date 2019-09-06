@@ -10,7 +10,6 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Utilisateur;
 
-
 class UtilisateurController extends AbstractController
 {
     /**
@@ -21,12 +20,11 @@ class UtilisateurController extends AbstractController
         $user = new Utilisateur();
         $form = $this->createForm(UtilisateurType::class, $user);
         $form->handleRequest($request);
-        
         $data=$request->request->all();
         $file=$request->files->all()['imageFile'];
 
         $form->submit($data);
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
             // encode the plain password
             $user->setPassword(
                 $passwordEncoder->encodePassword(
@@ -48,4 +46,5 @@ class UtilisateurController extends AbstractController
         }
         return $this->handleView($this->view($form->getErrors()));
     }
+ 
 }
