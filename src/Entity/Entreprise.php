@@ -65,7 +65,7 @@ class Entreprise
      */
     private $depots;
    
-    /*
+    /**
      * @ORM\Column(type="string", length=255)
      
      */

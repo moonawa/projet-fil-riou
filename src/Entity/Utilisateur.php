@@ -119,7 +119,7 @@ class Utilisateur implements UserInterface
      * @var string
      */
     private $imageName;
-    /**
+    /*
      * @ORM\Column(type="datetime", nullable=true)
 
      */

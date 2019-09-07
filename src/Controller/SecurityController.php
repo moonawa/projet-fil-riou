@@ -18,11 +18,12 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * @Route("/api",name="_api")
- */
+*/
 class SecurityController extends AbstractFOSRestController
 {
     /**
      * @Route("/register", name="register", methods={"Post"})
+     * @Security("has_role('ROLE_Super-admin')")
     */
     public function register(ValidatorInterface $validator, Request $request, UserpasswordEncoderInterface $passwordEncoder): Response{
         $user = new Utilisateur();
@@ -59,15 +60,15 @@ class SecurityController extends AbstractFOSRestController
             $profil = $repo->find($data['Profil']);
             $user->setProfil($profil);
 
-            if($profil->getLibelle()== "Super-admin"){
+            /* if($profil->getLibelle()== "Super-admin"){
                 $user->setRoles(['ROLE_Super_admin']);
-            }
-            elseif($profil->getLibelle()== "Caissier"){
+            } */
+            if($profil->getLibelle()== "Caissier"){
                 $user->setRoles(['ROLE_Caissier']);
             }
-            elseif($profil->getLibelle()== "admin-Principal"){
+            /* elseif($profil->getLibelle()== "admin-Principal"){
                 $user->setRoles(['ROLE_admin-Principal']);
-            }
+            } */
             elseif($profil->getLibelle()== "admin"){
                 $user->setRoles(['ROLE_admin']);
             }
@@ -97,7 +98,7 @@ class SecurityController extends AbstractFOSRestController
         */
         $libSupAdmi='Super-admin';
         $libCaissier='Caissier';
-        $libAdmiPrinc='admin-Principal';
+        //$libAdmiPrinc='admin-Principal';
         $libAdmi='admin';
         $utilisateur='utilisateur';
         /*
@@ -118,7 +119,7 @@ class SecurityController extends AbstractFOSRestController
 
             if($libelle == $libSupAdmi   && $profilUserConnecte != $libSupAdmi   ||
                $libelle == $libCaissier  && $profilUserConnecte != $libSupAdmi   ||
-               $libelle == $libAdmiPrinc && $profilUserConnecte != $libSupAdmi   ||
+               //$libelle == $libAdmiPrinc && $profilUserConnecte != $libSupAdmi   ||
                $libelle == $libAdmi      && $profilUserConnecte != $libAdmiPrinc ||
                $libelle == $utilisateur  && $profilUserConnecte != $libAdmiPrinc 
             ){

@@ -24,13 +24,13 @@ class AppFixtures extends Fixture
         $profilCaiss->setLibelle('Caissier');
         $manager->persist($profilCaiss);
         
-        $profilAdP=new Profil();
+        /* $profilAdP=new Profil();
         $profilAdP->setLibelle('admin-Principal');
-        $manager->persist($profilAdP);
+        $manager->persist($profilAdP); */
         
-        $profilAdm=new Profil();
+        /* $profilAdm=new Profil();
         $profilAdm->setLibelle('admin');
-        $manager->persist($profilAdm);
+        $manager->persist($profilAdm); */
         
         $profilUtil=new Profil();
         $profilUtil->setLibelle('utilisateur');
@@ -45,9 +45,6 @@ class AppFixtures extends Fixture
                     ->setEmail('awandiayesene7@gmail.com')
                     ->setTelephone(rand(770000000,779999999));
         
-
-        
-
         $compte = new Compte();
         $nocompte='MA'.rand(10000,99999);       
         $compte->setNoCompte($nocompte)

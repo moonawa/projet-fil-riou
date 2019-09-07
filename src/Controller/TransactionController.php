@@ -24,6 +24,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 /**
  * @Route("/api",name="_api")
  */
@@ -31,7 +32,6 @@ class TransactionController extends AbstractFOSRestController
 {
     /**
      * @Route("/transaction", name="transaction")
-     *
      */
     public function index()
     {
@@ -54,14 +54,13 @@ class TransactionController extends AbstractFOSRestController
             $dep->persist($depot);
             $dep->flush();
             return $this->handleView($this->view(['status' => 'ok'], Response::HTTP_CREATED));
-
         }
-
         return $this->handleView($this->view($form->getErrors));        
     }
     /**
      * @Route("/ajout/transaction", name="ajout_transaction", methods={"Post"})
-    */
+     * @Security("has_role('ROLE_utilisateur)")
+    */    
         public function ajout(Request $request, EntityManagerInterface $entityManager)
         {
             $transaction = new Transaction();
@@ -77,7 +76,7 @@ class TransactionController extends AbstractFOSRestController
             $transaction->setCode($codes);
 
             $user = $this->getUser();
-            //var_dump($user); die();
+            
             $transaction->setUserEmetteur($user);
                         
                 // recuperer la valeur du frais
@@ -143,6 +142,7 @@ class TransactionController extends AbstractFOSRestController
         }
         /**
          * @Route("/retrait/transaction", name="retrait_transaction", methods={"Post"})
+         * @Security("has_role('ROLE_utilisateur)")
         */
         public function retrait(ValidatorInterface $validator, TransactionRepository $transaction, Request $request, EntityManagerInterface $entityManager)
         {

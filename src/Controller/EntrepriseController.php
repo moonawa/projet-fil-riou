@@ -6,6 +6,7 @@ use App\Entity\Depot;
 use App\Entity\Compte;
 use App\Entity\Profil;
 use App\Form\DepotType;
+use App\Form\CompteType;
 use App\Entity\Entreprise;
 use App\Entity\Utilisateur;
 use App\Form\EntrepriseType;
@@ -21,15 +22,15 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * @Route("/api")
- */
+*/
 class EntrepriseController extends AbstractController
 {
- 
     /**
      * @Route("/{id}", name="show_entreprise", methods={"GET"})
     */
@@ -43,8 +44,10 @@ class EntrepriseController extends AbstractController
             'Content-Type' => 'application/json'
         ]);
     } */
+
     /**
      * @Route("/liste", name="listerentreprise", methods={"GET"})
+     * @Security("has_role('ROLE_Super-admin')")
      */
     public function lister(EntrepriseRepository $entrepriseRepository, SerializerInterface $serialize)
     {
@@ -61,59 +64,8 @@ class EntrepriseController extends AbstractController
     }
 
     /**
-     * @Route("/add/entreprise", name="add_entreprises", methods={"POST"})
-     */
-    public function add(Request $request, UserPasswordEncoderInterface $passwordEncoder, EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator){
-        
-        $values = json_decode($request->getContent());
-
-        $entreprise = new Entreprise();
-        $entreprise->setRaisonSociale($values->RaisonSociale);
-        $entreprise->setNinea($values->Ninea);
-        $entreprise->setAdresse($values->Adresse);
-        $entreprise->setSolde($values->Solde);
-        $entreprise->setStatus("Actif");
-        $entreprise->setEmail($values->email);
-        $entreprise->setTelephone($values->telephone);
-
-        $user = new Utilisateur();
-        $user->setUsername($values->username);
-        $user->setPassword($passwordEncoder->encodePassword($user, $values->password));
-        $user->setEmail($entreprise->getEmail());
-        $user->setNom($values->nom);
-        $user->setTelephone($entreprise->getTelephone());
-        $user->setStatus("Actif");
-        $user->setNci($values->Nci);
-        $user->setRoles(["'ROLE_Super-admin'"]);
-        $user->setPhoto($values->photo);
-        $user->setEntreprise($entreprise);
-        $form->submit($info);$form->submit($info);
-        $repos=$this->getDoctrine()->getRepository(Profil::class);
-        $Profil=$repos->find($values->Profil);
-        $user->setProfil($Profil);
-
-        $compte = new Compte();
-       //$compte = new Utilisateur();
-        $compte->setNoCompte($values->no_compte);
-        $compte->setSolde($values->solde);
-        $compte->setEntreprise($entreprise);
-        
-        $entityManager->persist($compte);$form->submit($info);
-        $entityManager->persist($user);
-        $entityManager->persist($entreprise);
-
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->flush();
-
-        $data = [
-            'status' => 201,
-            'message' => 'L\'utilisateur a été créé'
-        ];
-
-        return new JsonResponse($data, 201);
-    }
-    /**
      * @Route("/form/entreprise", name="add_entreprises", methods={"POST"})
+     * @Security("has_role('ROLE_Super-admin')")
      */
     public function new(Request $request, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder):Response
     {
@@ -129,57 +81,10 @@ class EntrepriseController extends AbstractController
         $entityManager->flush();
         return new Response('entreprise ajoute', Response::HTTP_CREATED);
     }
-    /**
-     * @Route("/ajout/entreprises", name="ajout_entreprise", methods={"POST"})
-    */
-    public function put(Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, ValidatorInterface $validator)
-    {       
-        $entreprise = $serializer->deserialize($request->getContent(), Entreprise::class,'json');
-        $errors = $validator->validate($entreprise);
-        if(count($errors)) {
-            $errors = $serializer->serialize($errors,'json');
-            return new Response($errors, 500, [
-                'Content-Type' => 'application/json'
-            ]);
-        }
-        $entityManager->persist($entreprise);
-        $entityManager->flush();
-        $data = [
-            'status' => 201,
-            'message' => 'L\'entreprise a été bien enregistré'
-        ];
-        return new JsonResponse($data, 201);
-    }
-    /**
-    * @Route("/entreprises/{id}", name="update_entreprise", methods={"PUT"})
-    */ 
-    public function update(Request $request, SerializerInterface $serializer, Entreprise $entreprise, ValidatorInterface $validator, EntityManagerInterface $entityManager)
-        {
-            $entrepriseUpdate = $entityManager->getRepository(Entreprise::class)->find($entreprise->getId());
-            $data = json_decode($request->getContent());
-            foreach ($data as $key => $value){
-                if($key && !empty($value)) {
-                    $name = ucfirst($key);
-                    $setter = 'set'.$name;
-                    $entrepriseUpdate->$setter($value);
-                }
-            }
-            $errors = $validator->validate($entrepriseUpdate);
-            if(count($errors)) {
-                $errors = $serializer->serialize($errors, 'json');
-                return new Response($errors, 500, [
-                    'Content-Type' => 'application/json'
-                ]);
-            }
-            $entityManager->flush();
-            $data = [
-                'status' => 200,
-                'message' => 'L\'entreprise a bien été mis à jour'
-            ];
-            return new JsonResponse($data);
-        }
+    
     /**
     * @Route("/bloque/entreprises/{id}", name="bloque_entreprise", methods={"PUT"})
+    * @Security("has_role('ROLE_Super-admin')")
     */ 
     public function bloque(Request $request, SerializerInterface $serializer, Entreprise $entreprise, ValidatorInterface $validator, EntityManagerInterface $entityManager, ObjectManager $manager)
     {
@@ -206,6 +111,7 @@ class EntrepriseController extends AbstractController
     }  
     /**
     * @Route("/depot/entreprise", name="depot_entreprise", methods={"POST"})
+    * @Security("has_role('ROLE_Caissier')")
     */
     public function depot (Request $request, UserInterface $Userconnecte)
     {
@@ -233,12 +139,12 @@ class EntrepriseController extends AbstractController
     }
     /**
      * @Route("/list", name="listeruser", methods={"GET"})
+     * @Security("has_role('ROLE_admin')")
      */
     public function list(UtilisateurRepository $utilisateurRepository, SerializerInterface $serialize)
     {
         $users = $utilisateurRepository->findAll();
-       
-        
+           
         $data = $serialize->serialize($users, 'json',[
             'groups' => ['show']
         ]);
@@ -246,5 +152,64 @@ class EntrepriseController extends AbstractController
         return new Response($data, 200, [
             'Content-Type'=>'application/json'
         ]);
+    }
+
+    /** 
+     * @Route("/ajout", name="admin_utilisateur_compte", methods={"POST"})
+     * @Security("has_role('ROLE_Super-admin')")
+     */
+    public function tout(Request $request, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder)
+    {
+        $entreprise = new Entreprise();
+        $form = $this->createForm(EntrepriseType::class, $entreprise);
+        $data = $request->request->all();
+        $form->submit($data);
+        $entreprise->setStatus('Actif');
+        
+        $entityManager->persist($entreprise);
+        $entityManager->flush();
+        //recuperation de l'id du entreprise//
+        $repository = $this->getDoctrine()->getRepository(Entreprise::class);
+        $part = $repository->find($entreprise->getId());
+
+        $compte = new Compte();
+        $form = $this->createForm(CompteType::class, $compte);
+        $data = $request->request->all();
+        $form->submit($data);
+        $compte->setSolde($part->getSolde());
+        /* $num = rand(100, 999);
+        $number=$num."";
+        $compte->setNumCompte($number); */
+        $nocompte='MA'.rand(10000,99999);       
+        $compte->setNoCompte($nocompte);
+        $compte->setEntreprise($part);
+        $entityManager = $this->getDoctrine()->getManager();
+    
+        $user = new Utilisateur();
+        $form = $this->createForm(UtilisateurType::class, $user);
+        $form->handleRequest($request);
+        $form->submit($data);
+        $user->setRoles(["ROLE_Super-admin"]);
+        $user->setEntreprise($part);
+        $user->setStatus("Actif")
+             ->setEmail($part->getEmail());
+        
+             /* $profil = new Profil();
+             ->setProfil($profil)
+ */
+             $user->setTelephone($part->getTelephone());
+        $user->setPassword($encoder->encodePassword($user,
+                             $form->get('plainPassword')->getData()
+                            ));
+        $file=$request->files->all()['imageName'];
+
+        $user->setImageFile($file);                    
+        //$user->setPassword($hash);
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $entityManager->persist($compte);
+        $entityManager->persist($user);
+        $entityManager->flush();
+        return new Response('Ajout d\'un entreprise de son user et d\'un compte pour ce dernier , fait', Response::HTTP_CREATED);
     }
 }
