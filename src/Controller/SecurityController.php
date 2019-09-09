@@ -5,11 +5,13 @@ namespace App\Controller;
 use App\Entity\Profil;
 use App\Entity\Utilisateur;
 use App\Form\UtilisateurType;
+use App\Repository\ProfilRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\FOSRestController;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -24,7 +26,7 @@ class SecurityController extends AbstractFOSRestController
     /**
      * @Route("/register", name="register", methods={"Post"})
      * @Security("has_role('ROLE_Super-admin')")
-    */
+     */
     public function register(ValidatorInterface $validator, Request $request, UserpasswordEncoderInterface $passwordEncoder): Response{
         $user = new Utilisateur();
         $form=$this->createForm(UtilisateurType::class,$user);
@@ -34,6 +36,8 @@ class SecurityController extends AbstractFOSRestController
             $data=$request->request->all();
             $file=$request->files->all()['imageName'];
             $user->setImageFile($file);
+            
+            
        // }
         $form->submit($data);
 
@@ -69,9 +73,9 @@ class SecurityController extends AbstractFOSRestController
             /* elseif($profil->getLibelle()== "admin-Principal"){
                 $user->setRoles(['ROLE_admin-Principal']);
             } */
-            elseif($profil->getLibelle()== "admin"){
+           /*  elseif($profil->getLibelle()== "admin"){
                 $user->setRoles(['ROLE_admin']);
-            }
+            } */
             elseif($profil->getLibelle()== "utilisateur"){
                 $user->setRoles(['ROLE_utilisateur']);
             }          
@@ -143,6 +147,24 @@ class SecurityController extends AbstractFOSRestController
      *@Route("/connexion", name="api_login", methods={"POST"})
      */
     public function login(){ /*gerer dans config packages security.yaml*/}
+
+    /**
+     * @Route("/listerprofil", name="listerprofil", methods={"GET"})
+     */
+    public function lis(ProfilRepository $profilRepository, SerializerInterface $serialize)
+    {
+        $profils = $profilRepository->findAll();
+       
+        
+        $data = $serialize->serialize($profils, 'json',[
+            'groups' => ['show']
+        ]);
+
+        return new Response($data, 200, [
+            'Content-Type'=>'application/json'
+        ]);
+    }
+
     
    
 }

@@ -39,7 +39,7 @@ class UtilisateurType extends AbstractType
             ->add('Telephone')
             ->add('Nci')
             ->add('imageFile', VichFileType::class)
-            ->add('Entreprise')
+            //->add('Entreprise')
             ->add('Profil', EntityType::class, ['class'=>Profil::class])
         ;
     }

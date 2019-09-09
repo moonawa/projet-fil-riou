@@ -11,6 +11,7 @@ use App\Entity\Entreprise;
 use App\Entity\Utilisateur;
 use App\Form\EntrepriseType;
 use App\Form\UtilisateurType;
+use App\Repository\ProfilRepository;
 use App\Repository\EntrepriseRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\UtilisateurRepository;
@@ -123,7 +124,11 @@ class EntrepriseController extends AbstractController
         {           
            $depot->setDate(new \DateTime());
            $depot->setCaissier($Userconnecte);
-           $entreprise=$depot->getEntreprise();
+           $entreprise=$depot->getCompte();
+           //id ese
+           
+
+           // id ese
            $entreprise->setSolde($entreprise->getSolde()+$depot->getMontant());
            $manager=$this->getDoctrine()->getManager();
            $manager->persist($entreprise);
@@ -212,4 +217,5 @@ class EntrepriseController extends AbstractController
         $entityManager->flush();
         return new Response('Ajout d\'un entreprise de son user et d\'un compte pour ce dernier , fait', Response::HTTP_CREATED);
     }
+    
 }

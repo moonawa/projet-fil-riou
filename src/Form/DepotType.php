@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Depot;
+use App\Entity\Compte;
 use App\Entity\Entreprise;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,7 +16,7 @@ class DepotType extends AbstractType
     {
         $builder
             ->add('Montant')
-            ->add('Entreprise',EntityType::class,['class'=> Entreprise::class,'choice_label'=>'RaisonSociale'])
+            ->add('compte',EntityType::class,['class'=> Compte::class,'choice_label'=>'id'])
         ;
     }
 

@@ -47,12 +47,12 @@ class Entreprise
      */
     private $Adresse;
 
-    /**
+    /*
      * @ORM\Column(type="bigint")
      * @Assert\NotBlank(message="Ce champ ne doit pas être vide")
-     * @Groups({"list"})
+     * @Groups({"list", "show"})
      */
-    private $Solde;
+   // private $Solde;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Utilisateur", mappedBy="Entreprise")
@@ -142,7 +142,7 @@ class Entreprise
         return $this;
     }
 
-    public function getSolde(): ?int
+    /* public function getSolde(): ?int
     {
         return $this->Solde;
     }
@@ -152,7 +152,7 @@ class Entreprise
         $this->Solde = $Solde;
 
         return $this;
-    }
+    } */
 
     /**
      * @return Collection|Utilisateur[]
