@@ -15,7 +15,7 @@ class EntrepriseType extends AbstractType
             ->add('RaisonSociale')
             ->add('Ninea')
             ->add('Adresse')
-            ->add('Solde')
+           // ->add('Solde')
             ->add('email')
             ->add('telephone')
         ;

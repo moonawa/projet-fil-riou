@@ -18,11 +18,7 @@ class Depot
      */
     private $id;
 
-    /*
-     * @ORM\ManyToOne(targetEntity="App\Entity\Entreprise", inversedBy="depots")
-     * @ORM\JoinColumn(nullable=false)
-     */
-   // private $Entreprise;
+   
 
     /**
      * @ORM\Column(type="datetime")
@@ -41,26 +37,15 @@ class Depot
     private $caissier;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Compte")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Compte", inversedBy="depots")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $compte;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    /* public function getEntreprise(): ?Entreprise
-    {
-        return $this->Entreprise;
-    }
-
-    public function setEntreprise(?Entreprise $Entreprise): self
-    {
-        $this->Entreprise = $Entreprise;
-
-        return $this;
-    } */
+    }   
 
     public function getDate(): ?\DateTimeInterface
     {
@@ -109,4 +94,5 @@ class Depot
 
         return $this;
     }
+
 }

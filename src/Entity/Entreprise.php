@@ -19,7 +19,7 @@ class Entreprise
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"list", "show"})
+     * @Groups({"list", "show", "comptes", "user"})
      */
     private $id;
     
@@ -28,6 +28,7 @@ class Entreprise
      * @Groups({"list", "show"})
      * @Assert\NotBlank(message="Ce champ ne doit pas être vide")
      * @Assert\Length(min="2", minMessage="Ce champ doit contenir un minimum de {{ limit }} caractères", max="255", maxMessage="Ce champ doit contenir un maximum de {{ limit }} caractères")
+    * @Groups({"list", "show", "comptes", "user"})
      */
     private $RaisonSociale;
 
@@ -47,16 +48,15 @@ class Entreprise
      */
     private $Adresse;
 
-    /*
-     * @ORM\Column(type="bigint")
+    
+     /* @ORM\Column(type="bigint")
      * @Assert\NotBlank(message="Ce champ ne doit pas être vide")
      * @Groups({"list", "show"})
      */
    // private $Solde;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Utilisateur", mappedBy="Entreprise")
-     
+     * @ORM\OneToMany(targetEntity="App\Entity\Utilisateur", mappedBy="Entreprise")   
      */
     private $utilisateurs;
 

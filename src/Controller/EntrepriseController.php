@@ -6,6 +6,7 @@ use App\Entity\Depot;
 use App\Entity\Compte;
 use App\Entity\Profil;
 use App\Form\DepotType;
+use App\Form\AlloueType;
 use App\Form\CompteType;
 use App\Entity\Entreprise;
 use App\Entity\Utilisateur;
@@ -118,7 +119,7 @@ class EntrepriseController extends AbstractController
     {
         $depot = new Depot();
         $form = $this->createForm(DepotType::class, $depot);
-        $data=json_decode($request->getContent(),true);
+        $data= $request->request->All();
         $form->submit($data);
         if($form->isSubmitted() && $form->isValid())
         {           
@@ -143,8 +144,52 @@ class EntrepriseController extends AbstractController
         return new JsonResponse($this->view($form->getErrors()), 500);
     }
     /**
+    * @Route("/user/compte", name="usecompte_entreprise", methods={"POST"})
+    * @Security("has_role('ROLE_Super-admin')")
+    */
+    public function alou (Request $request, UtilisateurRepository $user, EntityManagerInterface $entityManager)
+    {
+        $allou = new Utilisateur();
+        $form = $this->createForm(AlloueType::class, $allou);
+        $form->handleRequest($request);
+        $values=$request->request->all();
+        $form->submit($values);
+        $usernamee= $allou->getUsername();
+
+        $username=$user->findOneBy(['username'=>$usernamee]);
+            //$statut=$username->getEtat();
+            if(!$username){
+                return new Response('Cet utilisateur est invalide ',Response::HTTP_CREATED);
+            }
+                       
+            else
+            {
+            /*  $username->setDateReception(new \DateTime());
+                $userr = $this->getUser();
+                $username->setUserRecepteur($userr);
+                $username->setNciRecepteur($values['NciRecepteur']);
+
+                $username->setEtat('retrait'); */
+                //$username->getCompte('compte');
+
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($username);
+                $entityManager->flush();
+
+                //return $this->handleView($this->view(['status'=>'ok'], Response::HTTP_CREATED));
+                $data = [
+                    'status' => 201,
+                    'message' => 'Le compte a été ajouté'
+                ];
+        
+                return new JsonResponse($data, 201);
+           } 
+    }
+    /**
      * @Route("/list", name="listeruser", methods={"GET"})
-     * @Security("has_role('ROLE_admin')")
+     * @Security("has_role('ROLE_Super-admin')")
+     * 
+     * 
      */
     public function list(UtilisateurRepository $utilisateurRepository, SerializerInterface $serialize)
     {
@@ -181,7 +226,7 @@ class EntrepriseController extends AbstractController
         $form = $this->createForm(CompteType::class, $compte);
         $data = $request->request->all();
         $form->submit($data);
-        $compte->setSolde($part->getSolde());
+        $compte->setSolde(75000);
         /* $num = rand(100, 999);
         $number=$num."";
         $compte->setNumCompte($number); */
@@ -215,7 +260,47 @@ class EntrepriseController extends AbstractController
         $entityManager->persist($compte);
         $entityManager->persist($user);
         $entityManager->flush();
-        return new Response('Ajout d\'un entreprise de son user et d\'un compte pour ce dernier , fait', Response::HTTP_CREATED);
+        $data = [
+            'status' => 201,
+            'message' => 'Le compte a été ajouté'
+        ];
+
+        return new JsonResponse($data, 201);
+        }
+
+    /**
+     *@Route("/recherchecompte",name="recherchecompte", methods ={"GET","POST"})
+     */
+
+    public function recherchecompte (Request $request,EntityManagerInterface $entityManager, ValidatorInterface $validator , SerializerInterface $serializer)
+    {
+        $values = json_decode($request->getContent());
+        $compte = new Compte();
+        $compte->setNoCompte($values->noCompte);
+
+        $repository = $this->getDoctrine()->getRepository(Compte::class);
+        $compte = $repository->findBynoCompte($values->noCompte);
+     
+        $data = $serializer->serialize($compte, 'json',['groups'=>['comptes']]);
+        return new Response($data, 200, [
+            'Content-Type' => 'application/json'
+        ]);
+    }
+    /**
+     *@Route("/rechercheuser",name="rechercheuser", methods ={"GET","POST"})
+    */
+
+    public function rechercheuser (Request $request,EntityManagerInterface $entityManager, ValidatorInterface $validator , SerializerInterface $serializer)
+    {
+        $values = json_decode($request->getContent());
+        $user= new Utilisateur();
+        $user->setUsername($values->username);
+        $repository = $this->getDoctrine()->getRepository(Utilisateur::class);
+        $user = $repository->findByusername($values->username);
+        $data = $serializer->serialize($user, 'json',['groups'=>['user']]);
+        return new Response($data, 200, [
+            'Content-Type' => 'application/json'
+        ]);
     }
     
 }

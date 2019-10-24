@@ -2,14 +2,22 @@
 
 namespace App\Controller;
 
-use App\Form\UtilisateurType;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\HttpFoundation\Response;
+use App\Form\CompteType;
 use App\Entity\Utilisateur;
+use App\Form\UtilisateurType;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\UtilisateurRepository;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
+
+/**
+ * @Route("/api",name="_api")
+ */
 class UtilisateurController extends AbstractController
 {
     /**
@@ -45,6 +53,20 @@ class UtilisateurController extends AbstractController
             return $this->handleView($this->view(['status'=>'ok'],Response::HTTP_CREATED));
         }
         return $this->handleView($this->view($form->getErrors()));
+    }
+
+    /**
+    * @Route("/alloue/user", name="alloue_compte", methods={"Post"})
+    */    
+    public function allouer(ValidatorInterface $validator, UtilisateurRepository $utilisateur, Request $request, EntityManagerInterface $entityManager)
+    {
+        $user = new Utilisateur();
+        $form = $this->createForm(CompteType::class, $user);
+        $form->handleRequest($request);
+        $data=$request->request->all();
+        $form->submit($data);
+        
+        $id = $user->getId();
     }
  
 }

@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Profil;
+use App\Entity\Compte;
 use App\Entity\Utilisateur;
 use App\Form\UtilisateurType;
+use App\Repository\CompteRepository;
 use App\Repository\ProfilRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -158,6 +160,23 @@ class SecurityController extends AbstractFOSRestController
         
         $data = $serialize->serialize($profils, 'json',[
             'groups' => ['show']
+        ]);
+
+        return new Response($data, 200, [
+            'Content-Type'=>'application/json'
+        ]);
+    }
+    
+    /**
+     * @Route("/listercomptes", name="listercompte", methods={"GET"})
+     */
+    public function li(CompteRepository $compteRepository, SerializerInterface $serialize)
+    {
+        $comptes = $compteRepository->findAll();
+      // var_dump($comptes->getNoCompte()); die();
+        
+        $data = $serialize->serialize($comptes, 'json',[
+            'groups' => ['listercomptes']
         ]);
 
         return new Response($data, 200, [

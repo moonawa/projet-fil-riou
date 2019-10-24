@@ -2,8 +2,11 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource()
@@ -15,24 +18,44 @@ class Compte
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"show","listercomptes"})
+     *   *@Groups({"comptes"})
      */
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $no_compte;
+   
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"comptes"})
+
      */
     private $solde;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Entreprise", inversedBy="comptes")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"comptes"})
      */
     private $entreprise;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+    * @Groups({"listercomptes"})
+     *@Groups({"comptes"})
+     */
+    private $noCompte;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Depot", mappedBy="compte")
+     *   *@Groups({"comptes"})
+     */
+    private $depots;
+
+    public function __construct()
+    {
+        $this->depots = new ArrayCollection();
+    }
 
    
 
@@ -41,17 +64,6 @@ class Compte
         return $this->id;
     }
 
-    public function getNoCompte(): ?string
-    {
-        return $this->no_compte;
-    }
-
-    public function setNoCompte(string $no_compte): self
-    {
-        $this->no_compte = $no_compte;
-
-        return $this;
-    }
 
     public function getSolde(): ?string
     {
@@ -73,6 +85,49 @@ class Compte
     public function setEntreprise(?Entreprise $entreprise): self
     {
         $this->entreprise = $entreprise;
+
+        return $this;
+    }
+
+    public function getNoCompte(): ?string
+    {
+        return $this->noCompte;
+    }
+
+    public function setNoCompte(string $noCompte): self
+    {
+        $this->noCompte = $noCompte;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Depot[]
+     */
+    public function getDepots(): Collection
+    {
+        return $this->depots;
+    }
+
+    public function addDepot(Depot $depot): self
+    {
+        if (!$this->depots->contains($depot)) {
+            $this->depots[] = $depot;
+            $depot->setCompte($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDepot(Depot $depot): self
+    {
+        if ($this->depots->contains($depot)) {
+            $this->depots->removeElement($depot);
+            // set the owning side to null (unless already changed)
+            if ($depot->getCompte() === $this) {
+                $depot->setCompte(null);
+            }
+        }
 
         return $this;
     }

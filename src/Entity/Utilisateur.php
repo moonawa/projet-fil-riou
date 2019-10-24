@@ -22,17 +22,17 @@ class Utilisateur implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"list", "show"})
+     * @Groups({"list", "show", "user"})
      */
     private $id;
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"list", "show"})
+     * @Groups({"list", "show", "user"})
      */
     private $username;
     /**
      * @ORM\Column(type="json")
-     * @Groups({"list", "show"})
+     * @Groups({"list", "show", "user"})
      */
     private $roles = [];
     /**
@@ -48,13 +48,13 @@ class Utilisateur implements UserInterface
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Entreprise", inversedBy="utilisateurs")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"list", "show"})
+     * @Groups({"list", "show", "user"})
      */
     private $Entreprise;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"list", "show"})
+     * @Groups({"list", "show", "user"})
      */
     private $Nom;
 
@@ -71,7 +71,7 @@ class Utilisateur implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Groups({"list", "show"})
+     * @Groups({"list", "show", "user"})
      */
     private $Nci;
 
@@ -94,7 +94,7 @@ class Utilisateur implements UserInterface
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Profil", inversedBy="utilisateurs")
      * @ORM\JoinColumn(nullable=true)
-     * @Groups({"list", "show"})
+     * @Groups({"list", "show", "user"})
      */
     private $Profil;
 

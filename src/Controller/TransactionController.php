@@ -14,6 +14,7 @@ use App\Repository\EntrepriseRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\TransactionRepository;
 use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\FOSRestController;
@@ -22,9 +23,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 /**
  * @Route("/api",name="_api")
  */
@@ -58,8 +57,7 @@ class TransactionController extends AbstractFOSRestController
         return $this->handleView($this->view($form->getErrors));        
     }
     /**
-     * @Route("/ajout/transaction", name="ajout_transaction", methods={"Post"})
-     * @Security("has_role('ROLE_utilisateur)")
+    * @Route("/ajout/transaction", name="ajout_transaction", methods={"Post"})
     */    
         public function ajout(Request $request, EntityManagerInterface $entityManager)
         {
@@ -70,7 +68,7 @@ class TransactionController extends AbstractFOSRestController
             $form->submit($values);
             if($form->isSubmitted()){
             $transaction->setDateEnvoi(new \DateTime());
-
+            $valeur=1;
             $c='MA'.rand(10000000,99999999);
             $codes=$c;
             $transaction->setCode($codes);
@@ -199,6 +197,8 @@ class TransactionController extends AbstractFOSRestController
             'Content-Type'=>'application/json'
         ]);
     }
+
+    
 
 }
 
